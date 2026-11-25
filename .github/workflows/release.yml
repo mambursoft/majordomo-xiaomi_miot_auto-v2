@@ -1,0 +1,21 @@
+name: Build release
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          mkdir -p dist
+          NAME=${GITHUB_REPOSITORY##*/}
+          tar --exclude=.git --exclude=.github --exclude=dist -czf "dist/${NAME}-${GITHUB_REF_NAME}.tar.gz" .
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*
